@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100x Voice Bot</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+    h2 { text-align: center; margin-bottom: 20px; font-size: 2rem; color: #fff; }
+    textarea {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      resize: none;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      background-color: #ff4081;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: all 0.3s ease;
+    }
+    button:hover { background-color: #e91e63; transform: scale(1.05); }
+    h3 { margin-top: 20px; margin-bottom: 10px; color: #ffd700; font-size: 1.3rem; }
+    #reply {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      min-height: 60px;
+      font-size: 1rem;
+    }
+    footer { text-align: center; margin-top: 30px; font-size: 0.9rem; color: #ddd; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎤 My Voice Bot</h2>
+    <textarea id="question" rows="3" placeholder="Ask me a question..."></textarea><br>
+    <button onclick="askBot()">Send</button>
+    <button onclick="startVoice()">🎙 Speak</button>
+
+    <h3>🤖 Reply:</h3>
+    <p id="reply"></p>
+    <footer>Simple Voice Bot for 100x Stage 1 Assessment</footer>
+  </div>
+
+  <script>
+    const answers = [
+      {
+        keywords: ["life story", "your life story", "few sentences"],
+        reply: "I grew up fascinated by technology and problem-solving, which led me to software development and AI research."
+      },
+      {
+        keywords: ["superpower", "number 1 superpower", "#1 superpower"],
+        reply: "My ability to quickly learn complex concepts and apply them practically."
+      },
+      {
+        keywords: ["top 3 areas", "areas you'd like to grow", "areas to grow in"],
+        reply: "AI and machine learning, cloud computing, and full-stack web development."
+      },
+      {
+        keywords: ["misconception", "coworkers misconception", "coworkers think"],
+        reply: "Some think I'm reserved, but I'm actually very collaborative and communicative when discussing ideas."
+      },
+      {
+        keywords: ["push your boundaries", "push limits", "boundaries and limits"],
+        reply: "I take on challenges outside my comfort zone and learn from mistakes to continuously improve."
+      }
+    ];
+
+    function normalizeText(text) {
+      return text.toLowerCase().replace(/[^\w\s]/g, "").trim();
+    }
+
+    function askBot() {
+      const question = normalizeText(document.getElementById("question").value);
+
+      // Find a matching answer
+      const matched = answers.find(item => 
+        item.keywords.some(keyword => question.includes(keyword))
+      );
+
+      const reply = matched ? matched.reply : "Sorry, I can only answer the predefined questions.";
+      document.getElementById("reply").innerText = reply;
+
+      // Text-to-speech
+      const utterance = new SpeechSynthesisUtterance(reply);
+      speechSynthesis.speak(utterance);
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        document.getElementById("question").value = text;
+        askBot();
+      };
+    }
+  </script>
+</body>
+</html>
