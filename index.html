@@ -69,6 +69,21 @@
   </div>
 
   <script>
+    // Number words mapping (handles "three" vs "3")
+    const numberWords = {
+      "zero": "0",
+      "one": "1",
+      "two": "2",
+      "three": "3",
+      "four": "4",
+      "five": "5",
+      "six": "6",
+      "seven": "7",
+      "eight": "8",
+      "nine": "9",
+      "ten": "10"
+    };
+
     const answers = [
       {
         keywords: ["life story", "your life story", "few sentences"],
@@ -79,7 +94,7 @@
         reply: "My ability to quickly learn complex concepts and apply them practically."
       },
       {
-        keywords: ["top 3 areas", "areas you'd like to grow", "areas to grow in"],
+        keywords: ["top 3 areas", "top three areas", "areas you'd like to grow", "areas to grow in"],
         reply: "AI and machine learning, cloud computing, and full-stack web development."
       },
       {
@@ -93,7 +108,13 @@
     ];
 
     function normalizeText(text) {
-      return text.toLowerCase().replace(/[^\w\s]/g, "").trim();
+      let normalized = text.toLowerCase().replace(/[^\w\s]/g, "").trim();
+      // Replace number words with digits
+      for (const [word, digit] of Object.entries(numberWords)) {
+        const regex = new RegExp(`\\b${word}\\b`, "g");
+        normalized = normalized.replace(regex, digit);
+      }
+      return normalized;
     }
 
     function askBot() {
@@ -126,3 +147,4 @@
   </script>
 </body>
 </html>
+
